@@ -1,0 +1,65 @@
+/* Универсальные стили для статических информационных страниц: About, Docs и Privacy Policy. */
+.page {
+  min-height: 100vh;
+  width: 100%;
+  padding: 0 24px 18px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  align-items: start;
+  gap: 18px;
+}
+
+.card {
+  width: min(1440px, 100%);
+  margin: 18px auto 32px;
+  display: grid;
+  gap: 18px;
+}
+
+.backLink {
+  color: var(--ink-soft);
+  text-underline-offset: 0.18em;
+}
+
+.title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.lead {
+  color: var(--ink-soft);
+  font-size: 1.02rem;
+  line-height: 1.7;
+}
+
+.section {
+  display: grid;
+  gap: 10px;
+}
+
+.section h2 {
+  font-size: 1.1rem;
+}
+
+.section p,
+.section li {
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+
+.section ul {
+  padding-left: 20px;
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 0 16px 14px;
+  }
+
+  .card {
+    width: 100%;
+    margin-top: 10px;
+    padding: 22px;
+  }
+}
