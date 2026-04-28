@@ -1,12 +1,12 @@
 import Image from "next/image";
-import { SiteDisclaimer, SiteHeader } from "@/components/site/site-links";
+import { HomeLink, SiteDisclaimer } from "@/components/site/site-links";
 import styles from "@/components/site/info-page.module.css";
 
 // Статическая страница с кратким описанием идеи и архитектуры проекта.
 export default function AboutPage() {
   return (
     <main className={styles.page}>
-      <SiteHeader />
+      <HomeLink className={styles.homeLink} />
       <section className={styles.card}>
         <h1 className={styles.title}>О проекте</h1>
 
@@ -46,9 +46,9 @@ export default function AboutPage() {
           <section className={styles.section}>
             <h2>Практическая ценность</h2>
             <p>
-              FrameForge может использоваться как демонстрационный инструмент для анализа design-to-code-подхода:
-              он показывает, какие данные можно извлечь из Figma, как их интерпретировать и какие ограничения возникают
-              при автоматической генерации интерфейсного кода.
+              FrameForge представляет собой инструмент, направленный на разработку алгоритмического подхода к преобразованию дизайн-макетов из Figma в веб-верстку без использования LLM-моделей.
+              Основная ценность проекта заключается в возможности быстрого получения визуально приближенного результата в браузере, что позволяет оценить структуру и внешний вид интерфейса на ранних этапах разработки.
+              Полученный результат может служить базой для дальнейшей доработки и усложнения, включая высококачественную адаптивность и интеграцию с современными фреймворками. Но, вероятно, для достижения таких целей уже потребуется интеграция с LLM-моделями, что выходит за рамки текущей реализации.
             </p>
           </section>
         </div>

@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { ZodError } from "zod";
-import { SiteDisclaimer, SiteHeader } from "@/components/site/site-links";
+import { SiteDisclaimer, SiteNav } from "@/components/site/site-links";
 import {
   loadFigmaRequestSchema,
   loadFigmaResponseSchema,
@@ -166,9 +167,16 @@ export function ImportShell({ figmaState, figmaReason }: ImportShellProps) {
 
   return (
     <main className={styles.page}>
-      <SiteHeader />
       <section className={styles.shell}>
         <header className={styles.intro}>
+          <Image
+            className={styles.homeLogo}
+            src="/frameforge-logo.svg"
+            width={56}
+            height={56}
+            alt="FrameForge"
+            priority
+          />
           <h1 className={styles.title}>
             Превращаем <span className={styles.titleAccent}>Figma</span> макет в веб-код
           </h1>
@@ -217,6 +225,9 @@ export function ImportShell({ figmaState, figmaReason }: ImportShellProps) {
             {error ? <Notice message={error} /> : null}
           </section>
         )}
+        <div className={styles.inlineNav}>
+          <SiteNav />
+        </div>
       </section>
       <SiteDisclaimer />
     </main>

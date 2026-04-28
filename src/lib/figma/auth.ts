@@ -6,6 +6,7 @@ const SESSION_COOKIE = "transfig_figma_session";
 const STATE_COOKIE = "transfig_figma_oauth_state";
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 30;
 const STATE_TTL_MS = 1000 * 60 * 10;
+const USE_SECURE_COOKIES = process.env.NODE_ENV === "production";
 
 type CookieReader = {
   get(name: string): { value: string } | undefined;
@@ -161,7 +162,7 @@ export function writeStateCookie(cookieJar: CookieWriter, state: ReturnType<type
   cookieJar.set(STATE_COOKIE, encodeValue(state), {
     httpOnly: true,
     sameSite: "lax",
-    secure: false,
+    secure: USE_SECURE_COOKIES,
     path: "/",
     expires: new Date(state.expiresAt),
   });
@@ -187,7 +188,7 @@ export function clearStateCookie(cookieJar: CookieWriter) {
   cookieJar.set(STATE_COOKIE, "", {
     httpOnly: true,
     sameSite: "lax",
-    secure: false,
+    secure: USE_SECURE_COOKIES,
     path: "/",
     maxAge: 0,
   });
@@ -202,7 +203,7 @@ export function writeSessionCookie(cookieJar: CookieWriter, session: FigmaOAuthS
   cookieJar.set(SESSION_COOKIE, encodeValue(session), {
     httpOnly: true,
     sameSite: "lax",
-    secure: false,
+    secure: USE_SECURE_COOKIES,
     path: "/",
     expires: new Date(Math.min(session.expiresAt, Date.now() + SESSION_TTL_MS)),
   });
@@ -212,7 +213,7 @@ export function clearSessionCookie(cookieJar: CookieWriter) {
   cookieJar.set(SESSION_COOKIE, "", {
     httpOnly: true,
     sameSite: "lax",
-    secure: false,
+    secure: USE_SECURE_COOKIES,
     path: "/",
     maxAge: 0,
   });

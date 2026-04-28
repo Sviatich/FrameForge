@@ -15,8 +15,8 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FrameForge",
-  description: "Сервис для поэтапной трансляции Figma-макетов в код через parser, transformer, generator и exporter.",
+  title: "FrameForge | Превращаем Figma макет в веб-код",
+  description: "Сервис для трансляции Figma-макетов в код через parser, transformer, generator и exporter.",
 };
 
 export default function RootLayout({

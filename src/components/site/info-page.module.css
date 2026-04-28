@@ -2,16 +2,55 @@
 .page {
   min-height: 100vh;
   width: 100%;
-  padding: 0 24px 18px;
+  padding: 28px 24px 18px;
   display: grid;
   grid-template-rows: auto 1fr auto;
   align-items: start;
   gap: 18px;
 }
 
+.homeLink {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  justify-self: center;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 120ms ease;
+}
+
+.homeLink svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  flex: 0 0 auto;
+}
+
+.homeLink:hover {
+  background: rgba(20, 32, 51, 0.06);
+}
+
+.homeLink:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(20, 32, 51, 0.12);
+}
+
+.homeLink:active {
+  transform: translateY(1px);
+}
+
 .card {
   width: min(1180px, 100%);
-  margin: 28px auto 42px;
+  margin: 10px auto 42px;
   display: grid;
   justify-items: center;
   gap: 28px;

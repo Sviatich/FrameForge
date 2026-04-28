@@ -2,17 +2,17 @@
 .page {
   min-height: 100vh;
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: 1fr auto;
   align-items: center;
   padding: 0 24px 18px;
 }
 
 .shell {
-  width: min(640px, 100%);
+  width: min(650px, 100%);
   margin: 0 auto;
   display: grid;
   gap: 24px;
-  margin-bottom: 150px;
+  margin-bottom: 100px;
 }
 
 .intro {
@@ -22,8 +22,15 @@
   justify-items: center;
 }
 
+.homeLogo {
+  width: 50px;
+  height: 50px;
+  display: block;
+  margin-bottom: 6px;
+}
+
 .title {
-  font-size: clamp(2.8rem, 8vw, 4.3rem);
+  font-size: clamp(2.5rem, 8vw, 4rem);
   line-height: 0.94;
   letter-spacing: -0.07em;
 }
@@ -40,16 +47,13 @@
   margin: 0 auto;
   color: var(--ink-soft);
   font-size: 1.05rem;
-  line-height: 1.75;
 }
 
 .panel {
   padding: 10px;
-  border: 1px solid var(--line);
   border-radius: 10px;
-  background: var(--surface);
-  backdrop-filter: blur(22px);
-  box-shadow: var(--shadow);
+  background: #f5f5f7;
+  /* box-shadow: var(--shadow); */
 }
 
 .authCard,
@@ -66,6 +70,7 @@
   align-items: center;
   /* border-bottom: 1px solid var(--line); */
   /* padding-bottom: 14px; */
+  padding-left: 10px;
 }
 
 .toolbarRight {
@@ -86,10 +91,9 @@
   width: 100%;
   min-height: 51px;
   padding: 0 20px;
-  /* border: 1px solid var(--line); */
-  border: none;
+  border: 1px solid var(--line);
   border-radius: 5px;
-  background: #f4f4f4;
+  background: #fff;
   outline: none;
   font-size: 1rem;
   transition:
@@ -126,7 +130,6 @@
 
 .linkInput:focus-visible {
   border-color: rgba(20, 32, 51, 0.24);
-  background: #EEE;
   /* box-shadow: 0 0 0 3px rgba(20, 32, 51, 0.08); */
 }
 
@@ -200,6 +203,11 @@
   display: block;
   flex: 0 0 auto;
   margin-top: 3px;
+}
+
+.inlineNav {
+  display: flex;
+  justify-content: center;
 }
 
 @keyframes loaderSpin {
@@ -334,11 +342,17 @@
     padding: 16px;
   }
 
+  .homeLogo {
+    width: 48px;
+    height: 48px;
+  }
+
   .authHeader,
   .framesHeader,
   .linkRow {
     align-items: stretch;
     grid-template-columns: 1fr;
     flex-direction: column;
+    padding-left: 0px;
   }
 }

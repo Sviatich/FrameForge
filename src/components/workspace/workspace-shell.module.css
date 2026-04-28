@@ -1,6 +1,6 @@
 /* Стили рабочей области: шапка проекта, iframe preview, код-вьюер и дерево файлов. */
 .page {
-  width: min(1440px, calc(100vw - 32px));
+  width: min(1550px, calc(100vw - 32px));
   margin: 0 auto;
   padding: 20px 0 20px;
   display: grid;
@@ -16,9 +16,7 @@
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: var(--surface);
-  backdrop-filter: blur(18px);
-  box-shadow: var(--shadow);
+  background: #f5f5f7;
 }
 
 .headerActions {
@@ -198,8 +196,6 @@
   border: 1px solid var(--line);
   border-radius: 10px;
   background: var(--surface);
-  backdrop-filter: blur(18px);
-  box-shadow: var(--shadow);
   overflow: hidden;
 }
 
@@ -226,9 +222,9 @@
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 10px;
-  padding: 10px;
+  padding: 15px;
   border-right: 1px solid var(--line);
-  background: #f4f4f4;
+  background: #fff;
 }
 
 .frameSidebarHeader {
@@ -268,14 +264,10 @@
 }
 
 .sidebarIcon {
-  width: 19px;
-  height: 19px;
+  width: 18px;
+  height: 18px;
   display: block;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
+  fill: currentColor;
 }
 
 .framesList {
@@ -283,7 +275,7 @@
   align-content: start;
   overflow: auto;
   min-height: 0;
-  padding-right: 4px;
+  gap: 10px;
 }
 
 .frameItem {
@@ -293,9 +285,9 @@
   align-items: center;
   gap: 10px;
   padding: 13px;
-  border: none;
+  border: 1px solid var(--line);
   border-radius: 6px;
-  background: transparent;
+  background: #f5f5f7;
   color: var(--ink);
   text-align: left;
   transition:
@@ -324,6 +316,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 14px;
 }
 
 .frameItemMeta {
@@ -405,7 +398,7 @@
 }
 
 .workspaceDisclaimer {
-  width: min(1440px, 100%);
+  width: min(1550px, 100%);
   padding-bottom: 0;
 }
 
@@ -426,7 +419,7 @@
   justify-items: center;
   gap: 18px;
   padding: 32px;
-  color: var(--ink-soft);
+  color: #a7a7a7;
   text-align: center;
 }
 
@@ -562,7 +555,7 @@
 
 .fileExplorer {
   border-right: 1px solid var(--line);
-  background: #dddddd;
+  background: #f5f5f7;
   display: flex;
   flex-direction: column;
   padding: 16px 12px 16px 14px;
@@ -624,7 +617,7 @@
   width: 100%;
   border: 1px solid transparent;
   border-radius: 4px;
-  background: transparent;
+  background: #e3e5e7;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -755,7 +748,7 @@
 
 @media (max-width: 720px) {
   .page {
-    width: min(100vw - 20px, 1440px);
+    width: min(100vw - 20px, 1550px);
     padding-top: 16px;
   }
 
