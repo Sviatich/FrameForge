@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { SiteDisclaimer, SiteHeader } from "@/components/site/site-links";
 import styles from "@/components/site/info-page.module.css";
 
@@ -7,39 +8,52 @@ export default function DocPage() {
     <main className={styles.page}>
       <SiteHeader />
       <section className={styles.card}>
-
         <h1 className={styles.title}>Документация</h1>
-        <p className={styles.lead}>
-          Короткая инструкция по работе с сервисом: подключите Figma, вставьте ссылку на файл, выберите frame и
-          откройте рабочую область с превью и кодом.
-        </p>
 
-        <section className={styles.section}>
-          <h2>Как начать</h2>
-          <ul>
-            <li>Подключите аккаунт Figma через OAuth.</li>
-            <li>Вставьте ссылку на макет в главное поле на стартовом экране.</li>
-            <li>Нажмите «Загрузить макет» и дождитесь списка доступных frame.</li>
-            <li>Выберите нужный frame, после чего откроется рабочая область проекта.</li>
-          </ul>
-        </section>
+        <Image
+          className={styles.heroImage}
+          src="/info-pages/docs-v2.webp"
+          width={1536}
+          height={1024}
+          alt="Иллюстрация раздела документации"
+          priority
+        />
 
-        <section className={styles.section}>
-          <h2>Что доступно в рабочей области</h2>
-          <ul>
-            <li>Переключение между вкладками «Превью» и «Код».</li>
-            <li>Просмотр структуры файлов и исходного кода проекта.</li>
-            <li>Экспорт сгенерированного результата архивом.</li>
-          </ul>
-        </section>
-
-        <section className={styles.section}>
-          <h2>Ограничения текущей версии</h2>
-          <p>
-            Точность генерации зависит от структуры исходного Figma-макета: Auto Layout, вложенность фреймов, стили
-            текста, изображений и векторных элементов. Чем аккуратнее собран макет, тем стабильнее итоговый результат.
+        <div className={styles.content}>
+          <p className={styles.lead}>
+            Документация описывает основной сценарий работы с FrameForge: подключение Figma, загрузку макета, выбор
+            frame, генерацию кода, просмотр результата и экспорт готового проекта.
           </p>
-        </section>
+
+          <section className={styles.section}>
+            <h2>Как начать</h2>
+            <ul>
+              <li>Нажмите кнопку подключения и авторизуйтесь через Figma OAuth.</li>
+              <li>Скопируйте ссылку на Figma-файл или конкретный frame.</li>
+              <li>Вставьте ссылку на главной странице и запустите загрузку макета.</li>
+              <li>После загрузки выберите frame в боковой панели рабочей области.</li>
+            </ul>
+          </section>
+
+          <section className={styles.section}>
+            <h2>Рабочая область</h2>
+            <ul>
+              <li>Во вкладке «Превью» отображается сгенерированная HTML-страница в изолированном iframe.</li>
+              <li>Переключатели устройств позволяют проверить отображение в desktop, tablet и mobile-режимах.</li>
+              <li>Во вкладке «Код» доступна структура файлов и подсветка содержимого generated-проекта.</li>
+              <li>Кнопка экспорта собирает HTML, CSS и локализованные изображения в ZIP-архив.</li>
+            </ul>
+          </section>
+
+          <section className={styles.section}>
+            <h2>Рекомендации к макету</h2>
+            <p>
+              Для более стабильной генерации желательно использовать Auto Layout, понятные названия слоев, аккуратную
+              вложенность, единые текстовые стили и корректно настроенные изображения. Чем ближе макет к логической
+              структуре веб-страницы, тем точнее итоговый код.
+            </p>
+          </section>
+        </div>
       </section>
 
       <SiteDisclaimer />

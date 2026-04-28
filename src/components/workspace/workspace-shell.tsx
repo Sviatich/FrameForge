@@ -20,6 +20,7 @@ import {
   type FigmaSourceDto,
   type ProjectRecord,
 } from "@/lib/projects/schema";
+import { SiteDisclaimer } from "@/components/site/site-links";
 import styles from "./workspace-shell.module.css";
 
 // Рабочая область проекта: preview, дерево файлов, просмотр кода и экспорт архива.
@@ -245,7 +246,7 @@ export function WorkspaceShell({ projectId }: WorkspaceShellProps) {
     return (
       <main className={styles.page}>
         <section className={styles.stateCard}>
-          <p>Серверные проекты больше не используются. Вернитесь на главную и откройте макет заново.</p>
+          <Notice message="Серверные проекты больше не используются. Вернитесь на главную и откройте макет заново." />
           <Link className={styles.primaryButton} href="/">
             Загрузить макет
           </Link>
@@ -258,7 +259,7 @@ export function WorkspaceShell({ projectId }: WorkspaceShellProps) {
     return (
       <main className={styles.page}>
         <section className={styles.stateCard}>
-          <p>Рабочая сессия не найдена. Вернитесь на главную и загрузите Figma-макет заново.</p>
+          <Notice message="Рабочая сессия не найдена. Вернитесь на главную и загрузите Figma-макет заново." />
           <Link className={styles.primaryButton} href="/">
             Загрузить макет
           </Link>
@@ -413,7 +414,7 @@ export function WorkspaceShell({ projectId }: WorkspaceShellProps) {
             ))}
           </div>
 
-          {workspaceError ? <p className={styles.sidebarError}>{workspaceError}</p> : null}
+          {workspaceError ? <Notice className={styles.sidebarNotice} message={workspaceError} /> : null}
         </aside>
 
         <div className={styles.workspacePane}>
@@ -465,7 +466,17 @@ export function WorkspaceShell({ projectId }: WorkspaceShellProps) {
           )}
         </div>
       </section>
+      <SiteDisclaimer className={styles.workspaceDisclaimer} />
     </main>
+  );
+}
+
+function Notice({ message, className = "" }: { message: string; className?: string }) {
+  return (
+    <div className={`${styles.notice} ${className}`.trim()} role="status">
+      <WarningIcon />
+      <p>{message}</p>
+    </div>
   );
 }
 

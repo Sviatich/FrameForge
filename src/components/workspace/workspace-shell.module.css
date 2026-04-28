@@ -377,11 +377,36 @@
   animation: loaderSpin 1s linear infinite;
 }
 
-.sidebarError {
+.notice {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
   margin: 0;
-  color: #c03c2d;
-  font-size: 0.82rem;
-  line-height: 1.45;
+  padding: 12px;
+  border: 1px solid rgba(20, 32, 51, 0.1);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink-soft);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.notice p {
+  margin: 0;
+}
+
+.notice .warningIcon {
+  margin-top: 2px;
+}
+
+.sidebarNotice {
+  font-size: 0.8rem;
+}
+
+.workspaceDisclaimer {
+  width: min(1440px, 100%);
+  padding-bottom: 0;
 }
 
 .surfaceSidebarCollapsed .frameSidebar {
@@ -390,7 +415,7 @@
 
 .surfaceSidebarCollapsed .frameSidebarTitleBlock,
 .surfaceSidebarCollapsed .framesList,
-.surfaceSidebarCollapsed .sidebarError {
+.surfaceSidebarCollapsed .sidebarNotice {
   display: none;
 }
 
@@ -693,7 +718,7 @@
 }
 
 .surface {
-  height: calc(100vh - 135px);
+  height: calc(100vh - 165px);
   min-height: 560px;
 }
 

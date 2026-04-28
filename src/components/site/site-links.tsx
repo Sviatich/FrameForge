@@ -56,8 +56,7 @@ export function SiteDisclaimer({ className = "" }: SiteLinksProps) {
   return (
     <div className={`${styles.disclaimer} ${className}`.trim()} aria-label="Legal information">
       <p>
-        &copy; 2026 FrameForge. This product is an independent tool that utilizes the Figma API. It is not affiliated
-        with, endorsed, or sponsored by Figma, Inc. Figma is a trademark of Figma, Inc.
+        &copy; 2026 FrameForge. Этот продукт представляет собой независимый инструмент, использующий API Figma. Figma является товарным знаком компании Figma, Inc.
       </p>
     </div>
   );
@@ -113,13 +112,13 @@ function SiteNav({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <nav className={styles.links} aria-label="Service navigation">
       <Link href="/privacy-policy" onClick={onNavigate}>
-        Конфиденциальность
+        Политика конфиденциальности
       </Link>
       <Link href="/about" onClick={onNavigate}>
         О проекте
       </Link>
       <Link href="/doc" onClick={onNavigate}>
-        Документация
+        Инструкции
       </Link>
       <a href="https://github.com/Sviatich/FrameForge" target="_blank" rel="noreferrer" onClick={onNavigate}>
         GitHub

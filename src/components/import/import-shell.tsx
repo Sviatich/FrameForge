@@ -214,12 +214,21 @@ export function ImportShell({ figmaState, figmaReason }: ImportShellProps) {
               </button>
             </div>
 
-            {error ? <p className={styles.error}>{error}</p> : null}
+            {error ? <Notice message={error} /> : null}
           </section>
         )}
       </section>
       <SiteDisclaimer />
     </main>
+  );
+}
+
+function Notice({ message }: { message: string }) {
+  return (
+    <div className={styles.notice} role="status">
+      <WarningIcon />
+      <p>{message}</p>
+    </div>
   );
 }
 
@@ -233,6 +242,20 @@ function formatError(error: unknown) {
   }
 
   return "Неизвестная ошибка.";
+}
+
+function WarningIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={styles.noticeIcon}>
+      <path
+        d="M12 15H12.01M12 12V9M4.98207 19H19.0179C20.5615 19 21.5233 17.3256 20.7455 15.9923L13.7276 3.96153C12.9558 2.63852 11.0442 2.63852 10.2724 3.96153L3.25452 15.9923C2.47675 17.3256 3.43849 19 4.98207 19Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
 }
 
 function FigmaIcon() {

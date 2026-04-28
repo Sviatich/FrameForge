@@ -5,8 +5,8 @@
 }
 
 .header {
-  width: min(1440px, calc(100vw - 48px));
-  min-height: 64px;
+  width: min(1140px, calc(100vw - 48px));
+  min-height: 75px;
   position: relative;
   display: flex;
   align-items: center;
@@ -20,14 +20,14 @@
   align-items: center;
   gap: 8px;
   color: var(--ink);
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 900;
   text-decoration: none;
 }
 
 .brandIcon {
-  width: 13px;
-  height: 13px;
+  width: 18px;
+  height: 18px;
   flex: 0 0 auto;
 }
 
@@ -82,11 +82,11 @@
 .disclaimer {
   display: grid;
   gap: 6px;
-  width: min(1440px, calc(100vw - 48px));
+  width: min(1140px, calc(100vw - 48px));
   margin: 0 auto;
   padding: 0 0 8px;
   color: var(--ink-soft);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.65;
   text-align: center;
 }
@@ -97,7 +97,7 @@
 
 @media (max-width: 720px) {
   .header {
-    width: min(100vw - 32px, 1440px);
+    width: min(100vw - 32px, 1140px);
     min-height: 64px;
     align-items: center;
     flex-direction: row;
@@ -184,7 +184,7 @@
   }
 
   .disclaimer {
-    width: min(100vw - 32px, 1440px);
+    width: min(100vw - 32px, 1140px);
     padding-bottom: 4px;
     font-size: 0.72rem;
   }

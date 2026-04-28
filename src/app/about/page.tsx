@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { SiteDisclaimer, SiteHeader } from "@/components/site/site-links";
 import styles from "@/components/site/info-page.module.css";
 
@@ -7,37 +8,50 @@ export default function AboutPage() {
     <main className={styles.page}>
       <SiteHeader />
       <section className={styles.card}>
-
         <h1 className={styles.title}>О проекте</h1>
-        <p className={styles.lead}>
-          Transfig — это веб-приложение для преобразования Figma-макетов в код с рабочим пайплайном: загрузка,
-          разбор, интерпретация, генерация и экспорт.
-        </p>
 
-        <section className={styles.section}>
-          <h2>Идея проекта</h2>
-          <p>
-            Основа проекта строится вокруг движка трансляции. Он получает структуру Figma-файла, нормализует узлы,
-            определяет семантику элементов интерфейса и формирует итоговый код проекта.
+        <Image
+          className={styles.heroImage}
+          src="/info-pages/aboutus-v2.webp"
+          width={1536}
+          height={1024}
+          alt="Иллюстрация раздела о проекте"
+          priority
+        />
+
+        <div className={styles.content}>
+          <p className={styles.lead}>
+            FrameForge — это веб-приложение для автоматического преобразования Figma-макетов в статический
+            HTML/CSS-код с предпросмотром и экспортом результата.
           </p>
-        </section>
 
-        <section className={styles.section}>
-          <h2>Архитектура</h2>
-          <ul>
-            <li>UI-слой отвечает за ввод ссылки, выбор frame, предпросмотр и показ кода.</li>
-            <li>API-слой внутри Next.js обрабатывает запросы и связывает интерфейс с движком.</li>
-            <li>Core Engine включает parser, transformer, generator и exporter.</li>
-          </ul>
-        </section>
+          <section className={styles.section}>
+            <h2>Идея проекта</h2>
+            <p>
+              Проект решает задачу ускорения перехода от дизайн-макета к рабочему веб-прототипу. Пользователь
+              подключает Figma, вставляет ссылку на файл, выбирает нужный frame и получает сгенерированную структуру
+              проекта, которую можно изучить, проверить в предпросмотре и скачать.
+            </p>
+          </section>
 
-        <section className={styles.section}>
-          <h2>Для чего это нужно</h2>
-          <p>
-            Проект помогает сократить путь от дизайн-макета до рабочего прототипа, а также служит практической базой
-            для ВКР по теме автоматизированной генерации интерфейсного кода.
-          </p>
-        </section>
+          <section className={styles.section}>
+            <h2>Как устроена система</h2>
+            <p>
+              В основе приложения находится конвейер обработки данных: загрузка Figma JSON, нормализация узлов,
+              определение семантики элементов интерфейса, генерация HTML/CSS и подготовка результата к экспорту.
+              Такой подход разделяет интеграцию с Figma, бизнес-логику и пользовательский интерфейс.
+            </p>
+          </section>
+
+          <section className={styles.section}>
+            <h2>Практическая ценность</h2>
+            <p>
+              FrameForge может использоваться как демонстрационный инструмент для анализа design-to-code-подхода:
+              он показывает, какие данные можно извлечь из Figma, как их интерпретировать и какие ограничения возникают
+              при автоматической генерации интерфейсного кода.
+            </p>
+          </section>
+        </div>
       </section>
 
       <SiteDisclaimer />
