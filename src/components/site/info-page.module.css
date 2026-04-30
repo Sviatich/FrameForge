@@ -113,6 +113,10 @@
     padding: 0 16px 14px;
   }
 
+  .homeLink {
+    margin-top: 12px;
+  }
+
   .card {
     width: 100%;
     margin-top: 14px;

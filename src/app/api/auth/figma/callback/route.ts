@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import {
   clearStateCookie,
   exchangeCodeForSession,
-  validateStateFromCookies,
+  readOAuthStateFromCookies,
   writeSessionCookie,
 } from "@/lib/figma/auth";
 
@@ -20,12 +20,14 @@ export async function GET(request: Request) {
       return NextResponse.redirect(new URL(`/?figma=error&reason=${encodeURIComponent(error)}`, request.url));
     }
 
-    if (!code || !state || !validateStateFromCookies(cookieStore, state)) {
+    const oauthState = state ? readOAuthStateFromCookies(cookieStore, state) : null;
+
+    if (!code || !oauthState) {
       return NextResponse.redirect(new URL("/?figma=error&reason=invalid_oauth_state", request.url));
     }
 
     // Обмениваем одноразовый code на access/refresh token.
-    const session = await exchangeCodeForSession(code);
+    const session = await exchangeCodeForSession(code, oauthState.redirectUri);
     const response = NextResponse.redirect(new URL("/?figma=connected", request.url));
     clearStateCookie(response.cookies);
     writeSessionCookie(response.cookies, session);

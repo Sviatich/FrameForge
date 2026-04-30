@@ -7,6 +7,7 @@ const STATE_COOKIE = "transfig_figma_oauth_state";
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 30;
 const STATE_TTL_MS = 1000 * 60 * 10;
 const USE_SECURE_COOKIES = process.env.NODE_ENV === "production";
+const DEFAULT_APP_URL = process.env.NODE_ENV === "production" ? "https://frameforge.ru" : "http://localhost:3000";
 
 type CookieReader = {
   get(name: string): { value: string } | undefined;
@@ -43,13 +44,15 @@ export type FigmaOAuthSession = {
   userId?: string;
 };
 
-export function getFigmaOAuthConfig() {
+export function getFigmaOAuthConfig(requestUrl?: string, redirectUriOverride?: string) {
   // Все параметры OAuth собраны в одном месте, чтобы не размазывать env-логику по проекту.
   const clientId = process.env.FIGMA_OAUTH_CLIENT_ID;
   const clientSecret = process.env.FIGMA_OAUTH_CLIENT_SECRET;
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  const redirectUri = process.env.FIGMA_OAUTH_REDIRECT_URI ?? `${appUrl}/api/auth/figma/callback`;
-  const scopes = process.env.FIGMA_OAUTH_SCOPES ?? "file_content:read";
+  const requestOrigin = getRequestOrigin(requestUrl);
+  const appUrl = normalizeBaseUrl(process.env.NEXT_PUBLIC_APP_URL) ?? requestOrigin ?? DEFAULT_APP_URL;
+  const configuredRedirectUri = normalizeRedirectUri(process.env.FIGMA_OAUTH_REDIRECT_URI);
+  const redirectUri = redirectUriOverride ?? configuredRedirectUri ?? `${appUrl}/api/auth/figma/callback`;
+  const scopes = process.env.FIGMA_OAUTH_SCOPES ?? "file_content:read file_metadata:read";
 
   return {
     clientId,
@@ -60,8 +63,8 @@ export function getFigmaOAuthConfig() {
   };
 }
 
-export function assertFigmaOAuthConfigured() {
-  const config = getFigmaOAuthConfig();
+export function assertFigmaOAuthConfigured(requestUrl?: string, redirectUriOverride?: string) {
+  const config = getFigmaOAuthConfig(requestUrl, redirectUriOverride);
 
   if (!config.clientId || !config.clientSecret || !config.redirectUri) {
     throw new Error("Figma OAuth не настроен. Укажите FIGMA_OAUTH_CLIENT_ID, FIGMA_OAUTH_CLIENT_SECRET и FIGMA_OAUTH_REDIRECT_URI.");
@@ -76,9 +79,9 @@ export function assertFigmaOAuthConfigured() {
   };
 }
 
-export function buildFigmaAuthorizeUrl() {
-  const config = assertFigmaOAuthConfigured();
-  const state = createOAuthState();
+export function buildFigmaAuthorizeUrl(requestUrl?: string) {
+  const config = assertFigmaOAuthConfigured(requestUrl);
+  const state = createOAuthState(config.redirectUri);
   const url = new URL("https://www.figma.com/oauth");
   url.searchParams.set("client_id", config.clientId);
   url.searchParams.set("redirect_uri", config.redirectUri);
@@ -92,9 +95,9 @@ export function buildFigmaAuthorizeUrl() {
   };
 }
 
-export async function exchangeCodeForSession(code: string) {
+export async function exchangeCodeForSession(code: string, redirectUri?: string) {
   // Первый обмен: одноразовый authorization code превращаем в рабочую OAuth-сессию.
-  const config = assertFigmaOAuthConfigured();
+  const config = assertFigmaOAuthConfigured(undefined, redirectUri);
   const body = new URLSearchParams({
     redirect_uri: config.redirectUri,
     code,
@@ -128,7 +131,7 @@ export async function refreshSession(refreshToken: string) {
     grant_type: "refresh_token",
   });
 
-  const response = await fetch("https://api.figma.com/v1/oauth/token", {
+  const response = await fetch("https://api.figma.com/v1/oauth/refresh", {
     method: "POST",
     headers: {
       Authorization: buildBasicAuthHeader(config.clientId, config.clientSecret),
@@ -147,7 +150,7 @@ export async function refreshSession(refreshToken: string) {
   return toSession(payload);
 }
 
-export function createOAuthState() {
+export function createOAuthState(redirectUri?: string) {
   // State защищает callback от подмены и привязывает возврат к нашей сессии.
   const nonce = randomUUID();
   const value = `${nonce}.${createHash("sha256").update(nonce).digest("hex")}`;
@@ -155,6 +158,7 @@ export function createOAuthState() {
   return {
     value,
     expiresAt: Date.now() + STATE_TTL_MS,
+    redirectUri,
   };
 }
 
@@ -169,19 +173,27 @@ export function writeStateCookie(cookieJar: CookieWriter, state: ReturnType<type
 }
 
 export function validateStateFromCookies(cookieStore: CookieReader, state: string) {
+  return Boolean(readOAuthStateFromCookies(cookieStore, state));
+}
+
+export function readOAuthStateFromCookies(cookieStore: CookieReader, state: string) {
   const raw = cookieStore.get(STATE_COOKIE)?.value;
 
   if (!raw) {
-    return false;
+    return null;
   }
 
-  const parsed = decodeValue<{ value: string; expiresAt: number }>(raw);
+  const parsed = decodeValue<{ value: string; expiresAt: number; redirectUri?: string }>(raw);
 
   if (!parsed) {
-    return false;
+    return null;
   }
 
-  return parsed.value === state && parsed.expiresAt > Date.now();
+  if (parsed.value !== state || parsed.expiresAt <= Date.now()) {
+    return null;
+  }
+
+  return parsed;
 }
 
 export function clearStateCookie(cookieJar: CookieWriter) {
@@ -261,6 +273,50 @@ function toSession(payload: FigmaOAuthTokenResponse): FigmaOAuthSession {
 function buildBasicAuthHeader(clientId: string, clientSecret: string) {
   const encoded = Buffer.from(`${clientId}:${clientSecret}`, "utf8").toString("base64");
   return `Basic ${encoded}`;
+}
+
+function getRequestOrigin(requestUrl?: string) {
+  if (!requestUrl) {
+    return null;
+  }
+
+  try {
+    const origin = new URL(requestUrl).origin;
+    return isLocalOrigin(origin) && process.env.NODE_ENV === "production" ? null : origin;
+  } catch {
+    return null;
+  }
+}
+
+function normalizeBaseUrl(value?: string) {
+  if (!value) {
+    return null;
+  }
+
+  const normalized = value.replace(/\/+$/, "");
+
+  if (process.env.NODE_ENV === "production" && isLocalOrigin(normalized)) {
+    return null;
+  }
+
+  return normalized;
+}
+
+function normalizeRedirectUri(value?: string) {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const url = new URL(value);
+    return process.env.NODE_ENV === "production" && isLocalOrigin(url.origin) ? null : value;
+  } catch {
+    return value;
+  }
+}
+
+function isLocalOrigin(origin: string) {
+  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin);
 }
 
 async function safeReadText(response: Response) {

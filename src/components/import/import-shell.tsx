@@ -178,7 +178,7 @@ export function ImportShell({ figmaState, figmaReason }: ImportShellProps) {
             priority
           />
           <h1 className={styles.title}>
-            Превращаем <span className={styles.titleAccent}>Figma</span> макет в веб-код
+            Превращаем <span className={styles.titleAccent}>Figma</span><br /> макет в веб-верстку
           </h1>
           <p className={styles.description}>
             Выпускная квалификационная работа Петрина Святослава Андреевича
@@ -189,8 +189,7 @@ export function ImportShell({ figmaState, figmaReason }: ImportShellProps) {
           <section className={`${styles.panel} ${styles.authCard}`}>
             <div className={styles.authHeader}>
               <div>
-                <strong>Подключение Figma</strong>
-                <p className={styles.hint}>Авторизуйтесь с помощью вашего аккаунта</p>
+                <p className={styles.hint}>Авторизуйтесь с помощью вашего аккаунта Figma</p>
               </div>
 
               <div className={styles.toolbarRight}>
