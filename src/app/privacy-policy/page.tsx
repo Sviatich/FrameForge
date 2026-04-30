@@ -47,17 +47,7 @@ export default function PrivacyPolicyPage() {
                 стили, цвета, эффекты и ссылки на изображения. Без этого доступа сервис не сможет разобрать макет и
                 сгенерировать HTML/CSS-код.
               </li>
-              <li>
-                <strong>file_metadata:read</strong> — разрешение на чтение базовой информации о Figma-файле:
-                названия, доступных страниц, связанных метаданных и служебных сведений, которые помогают корректно
-                определить выбранный пользователем файл без доступа на изменение.
-              </li>
             </ul>
-            <p>
-              Разрешения из категории Design System, например <strong>library_assets:read</strong>,{" "}
-              <strong>library_content:read</strong> и <strong>team_library_content:read</strong>, FrameForge не
-              использует для текущего сценария загрузки одного макета по ссылке.
-            </p>
           </section>
 
           <section className={styles.section}>
