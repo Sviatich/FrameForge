@@ -51,6 +51,7 @@ export function ImportShell({ figmaState, figmaReason }: ImportShellProps) {
       return json as AuthSession;
     },
   });
+  const { refetch: refetchSession } = sessionQuery;
 
   useEffect(() => {
     // Восстанавливаем незавершенный сценарий импорта после обычной навигации внутри приложения.
@@ -80,7 +81,7 @@ export function ImportShell({ figmaState, figmaReason }: ImportShellProps) {
     // Реагируем на возврат из OAuth callback и показываем человеку понятный статус.
     if (figmaState === "connected") {
       setError("");
-      sessionQuery.refetch();
+      refetchSession();
     }
 
     if (figmaState === "error") {
@@ -90,7 +91,7 @@ export function ImportShell({ figmaState, figmaReason }: ImportShellProps) {
           : "Не удалось завершить подключение Figma.",
       );
     }
-  }, [figmaReason, figmaState, sessionQuery]);
+  }, [figmaReason, figmaState, refetchSession]);
 
   useEffect(() => {
     // Если сессия оборвалась, сбрасываем локальное состояние, связанное с текущим макетом.

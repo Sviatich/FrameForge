@@ -1,9 +1,15 @@
 import { z } from "zod";
 
 // Zod-схемы описывают внешний контракт между UI, API и слоем хранения проектов.
+const FIGMA_FILE_URL_PATTERN = /figma\.com\/(?:design|file)\/[^/?#]+/i;
+
 export const figmaSourceSchema = z.object({
   kind: z.literal("figma-link"),
-  url: z.string().trim().min(1, "Вставьте ссылку на макет Figma."),
+  url: z
+    .string()
+    .trim()
+    .min(1, "Вставьте ссылку на макет Figma.")
+    .refine((value) => FIGMA_FILE_URL_PATTERN.test(value), "Вставьте корректную ссылку на Figma-файл."),
   accessToken: z.string().trim().optional().or(z.literal("")),
 });
 
