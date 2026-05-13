@@ -1,6 +1,31 @@
 import { extractFileKeyFromUrl, extractNodeIdFromUrl } from "./mapper";
 import type { FigmaAssetUrls, FigmaRawFile, FigmaRawNode, FigmaResolvedFile, FigmaSourceInput } from "./types";
 
+export class FigmaApiError extends Error {
+  status: number;
+  statusText: string;
+  retryAfterSeconds: number | null;
+  details: string;
+
+  constructor(response: Response, details: string) {
+    const retryAfterSeconds = parseRetryAfter(response.headers.get("retry-after"));
+    const retryMessage =
+      response.status === 429
+        ? retryAfterSeconds !== null
+          ? ` Повторите попытку через ${formatRetryAfter(retryAfterSeconds)}.`
+          : " Figma не передала точное время ожидания, попробуйте снова через несколько минут."
+        : "";
+
+    super(`Figma API вернул ${response.status} ${response.statusText}. ${details}${retryMessage}`.trim());
+
+    this.name = "FigmaApiError";
+    this.status = response.status;
+    this.statusText = response.statusText;
+    this.retryAfterSeconds = retryAfterSeconds;
+    this.details = details;
+  }
+}
+
 // Серверный клиент Figma API: загрузка файла, ассетов и SVG-рендеров отдельных узлов.
 export async function resolveFigmaFile(source: FigmaSourceInput): Promise<FigmaResolvedFile> {
   const fileKey = extractFileKeyFromUrl(source.url);
@@ -26,7 +51,7 @@ export async function resolveFigmaFile(source: FigmaSourceInput): Promise<FigmaR
 
   if (!response.ok) {
     const details = await safeReadResponse(response);
-    throw new Error(`Figma API вернул ${response.status} ${response.statusText}. ${details}`.trim());
+    throw new FigmaApiError(response, details);
   }
 
   const payload = (await response.json()) as FigmaRawFile;
@@ -152,4 +177,49 @@ async function safeReadResponse(response: Response) {
   } catch {
     return "";
   }
+}
+
+function parseRetryAfter(value: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  const seconds = Number(value);
+
+  if (Number.isFinite(seconds)) {
+    return Math.max(0, Math.ceil(seconds));
+  }
+
+  const retryAt = Date.parse(value);
+
+  if (Number.isNaN(retryAt)) {
+    return null;
+  }
+
+  return Math.max(0, Math.ceil((retryAt - Date.now()) / 1000));
+}
+
+export function formatRetryAfter(seconds: number) {
+  if (seconds < 60) {
+    return formatRuUnit(seconds, "секунду", "секунды", "секунд");
+  }
+
+  const minutes = Math.ceil(seconds / 60);
+
+  if (minutes < 60) {
+    return formatRuUnit(minutes, "минуту", "минуты", "минут");
+  }
+
+  const hours = Math.ceil(minutes / 60);
+
+  return formatRuUnit(hours, "час", "часа", "часов");
+}
+
+function formatRuUnit(value: number, one: string, few: string, many: string) {
+  const normalized = Math.abs(value);
+  const lastTwo = normalized % 100;
+  const last = normalized % 10;
+  const unit = lastTwo >= 11 && lastTwo <= 14 ? many : last === 1 ? one : last >= 2 && last <= 4 ? few : many;
+
+  return `${value} ${unit}`;
 }

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import { Providers } from "./providers";
+import { YandexMetrika } from "./yandex-metrika";
 
 // Корневой layout приложения: подключает шрифты, глобальные стили и провайдеры.
 const inter = Inter({
@@ -29,6 +31,9 @@ export default function RootLayout({
       <body>
         {/* Подключаем клиентские провайдеры один раз на все приложение. */}
         <Providers>{children}</Providers>
+        <Suspense fallback={null}>
+          <YandexMetrika />
+        </Suspense>
       </body>
     </html>
   );

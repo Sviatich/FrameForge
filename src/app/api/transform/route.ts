@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { attachSessionCookie, ensureValidFigmaSession } from "@/lib/figma/auth";
+import { FigmaApiError, formatRetryAfter } from "@/lib/figma/client";
 import { transformProjectRequestSchema } from "@/lib/projects/schema";
 import { buildProject } from "@/lib/projects/service";
 
@@ -27,6 +28,17 @@ export async function POST(request: Request) {
           message: error.issues[0]?.message ?? "Ошибка валидации запроса.",
         },
         { status: 400 },
+      );
+    }
+
+    if (error instanceof FigmaApiError) {
+      return NextResponse.json(
+        {
+          message: error.message,
+          retryAfterSeconds: error.retryAfterSeconds,
+          retryAfterText: error.retryAfterSeconds !== null ? formatRetryAfter(error.retryAfterSeconds) : null,
+        },
+        { status: error.status },
       );
     }
 
