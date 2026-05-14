@@ -70,8 +70,16 @@
   color: var(--ink-soft);
 }
 
+.projectStatusWarning .warningIcon {
+  color: #d79239;
+}
+
 .projectStatusReady {
   color: var(--ink-soft);
+}
+
+.projectStatusReady .warningIcon {
+  color: #357d4c;
 }
 
 .warningIcon {
@@ -214,6 +222,7 @@
   min-width: 0;
   min-height: 0;
   height: 100%;
+  background: #f5f5f7;
 }
 
 .frameSidebar {
@@ -337,8 +346,16 @@
   color: var(--ink-soft);
 }
 
+.frameItemMetaReady .warningIcon {
+  color: #357d4c;
+}
+
 .frameItemMetaWarning {
   color: var(--ink-soft);
+}
+
+.frameItemMetaWarning .warningIcon {
+  color: #d79239;
 }
 
 .frameItemAction {

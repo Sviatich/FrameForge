@@ -9,14 +9,12 @@ export class FigmaApiError extends Error {
 
   constructor(response: Response, details: string) {
     const retryAfterSeconds = parseRetryAfter(response.headers.get("retry-after"));
-    const retryMessage =
+    const message =
       response.status === 429
-        ? retryAfterSeconds !== null
-          ? ` Повторите попытку через ${formatRetryAfter(retryAfterSeconds)}.`
-          : " Figma не передала точное время ожидания, попробуйте снова через несколько минут."
-        : "";
+        ? buildRateLimitMessage(retryAfterSeconds)
+        : `Figma API вернул ${response.status} ${response.statusText}. ${details}`.trim();
 
-    super(`Figma API вернул ${response.status} ${response.statusText}. ${details}${retryMessage}`.trim());
+    super(message);
 
     this.name = "FigmaApiError";
     this.status = response.status;
@@ -197,6 +195,15 @@ function parseRetryAfter(value: string | null) {
   }
 
   return Math.max(0, Math.ceil((retryAt - Date.now()) / 1000));
+}
+
+function buildRateLimitMessage(retryAfterSeconds: number | null) {
+  const waitMessage =
+    retryAfterSeconds !== null
+      ? `Подождите ${formatRetryAfter(retryAfterSeconds)} и попробуйте снова.`
+      : "Figma не передала точное время ожидания, попробуйте снова через несколько минут.";
+
+  return `Лимит запросов к Figma на вашем аккаунте исчерпан. Смените аккаунт, тарифный план или подождите. ${waitMessage}`;
 }
 
 export function formatRetryAfter(seconds: number) {
