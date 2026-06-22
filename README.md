@@ -31,5 +31,3 @@ npm test
 npm run test:watch
 npm run test:coverage
 ```
-
-Команда `test:coverage` выводит сводку покрытия в терминал и создаёт подробный HTML-отчёт в `coverage/index.html`.
