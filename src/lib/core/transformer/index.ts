@@ -21,6 +21,7 @@ export function transformNode(
     tag,
     className: buildClassName(node.id, node.name, role),
     textContent: node.textContent,
+    textSegments: node.textSegments,
     role,
     semanticKind,
     sectionPattern,

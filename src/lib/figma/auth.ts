@@ -147,7 +147,7 @@ export async function refreshSession(refreshToken: string) {
   }
 
   const payload = (await response.json()) as FigmaOAuthTokenResponse;
-  return toSession(payload);
+  return toSession(payload, refreshToken);
 }
 
 export function createOAuthState(redirectUri?: string) {
@@ -247,12 +247,18 @@ export async function ensureValidFigmaSession(cookieStore: CookieReader) {
     return { session: null, refreshed: null as FigmaOAuthSession | null };
   }
 
-  const refreshed = await refreshSession(session.refreshToken);
-  return { session: refreshed, refreshed };
+  try {
+    const refreshed = await refreshSession(session.refreshToken);
+    return { session: refreshed, refreshed };
+  } catch {
+    // An expired or revoked refresh token ends the local session as well.
+    return { session: null, refreshed: null as FigmaOAuthSession | null };
+  }
 }
 
 export function attachSessionCookie(response: NextResponse, session: FigmaOAuthSession | null) {
   if (!session) {
+    clearSessionCookie(response.cookies);
     return response;
   }
 
@@ -260,10 +266,10 @@ export function attachSessionCookie(response: NextResponse, session: FigmaOAuthS
   return response;
 }
 
-function toSession(payload: FigmaOAuthTokenResponse): FigmaOAuthSession {
+function toSession(payload: FigmaOAuthTokenResponse, fallbackRefreshToken?: string): FigmaOAuthSession {
   return {
     accessToken: payload.access_token,
-    refreshToken: payload.refresh_token,
+    refreshToken: payload.refresh_token ?? fallbackRefreshToken,
     tokenType: payload.token_type ?? "Bearer",
     expiresAt: Date.now() + (payload.expires_in ?? 3600) * 1000,
     userId: payload.user_id,

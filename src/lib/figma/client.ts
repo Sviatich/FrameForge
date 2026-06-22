@@ -24,6 +24,10 @@ export class FigmaApiError extends Error {
   }
 }
 
+export function isFigmaAuthenticationError(error: FigmaApiError) {
+  return error.status === 401 || /invalid[ _-]?(access[ _-]?)?token|token.+(?:expired|revoked)/i.test(error.details);
+}
+
 // Серверный клиент Figma API: загрузка файла, ассетов и SVG-рендеров отдельных узлов.
 export async function resolveFigmaFile(source: FigmaSourceInput): Promise<FigmaResolvedFile> {
   const fileKey = extractFileKeyFromUrl(source.url);

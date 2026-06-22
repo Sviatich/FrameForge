@@ -57,12 +57,18 @@ export type FigmaRawMainComponent = {
   componentSetId?: string;
 };
 
+export type FigmaRawTextStyleOverride = {
+  fills?: FigmaRawFill[];
+};
+
 export type FigmaRawNode = {
   id?: string;
   name?: string;
   type?: string;
   visible?: boolean;
   characters?: string;
+  characterStyleOverrides?: number[];
+  styleOverrideTable?: Record<string, FigmaRawTextStyleOverride>;
   children?: FigmaRawNode[];
   fills?: FigmaRawFill[];
   strokes?: FigmaRawFill[];

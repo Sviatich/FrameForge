@@ -53,6 +53,7 @@ export function parseFigmaNode(
     name: node.name ?? "Без названия",
     type: node.type ?? "UNKNOWN",
     textContent: node.characters ?? "",
+    textSegments: extractTextSegments(node),
     x: relativeX,
     y: relativeY,
     width,
@@ -299,6 +300,37 @@ function extractTextColor(node: FigmaRawNode) {
   // Для текста читаем первый видимый SOLID fill как основной цвет шрифта.
   const fillColor = node.fills?.find((fill) => fill.type === "SOLID" && fill.visible !== false)?.color;
   return fillColor ? toCssColor(fillColor) : null;
+}
+
+function extractTextSegments(node: FigmaRawNode): ParsedNode["textSegments"] {
+  const text = node.characters ?? "";
+  const overrides = node.characterStyleOverrides;
+  const styleTable = node.styleOverrideTable;
+
+  if (!text || !overrides?.length || !styleTable) {
+    return [];
+  }
+
+  const baseColor = extractTextColor(node);
+  const segments: ParsedNode["textSegments"] = [];
+  const unicodeCharacters = Array.from(text);
+  const characters = overrides.length === unicodeCharacters.length ? unicodeCharacters : text.split("");
+
+  for (let index = 0; index < characters.length; index += 1) {
+    const style = styleTable[String(overrides[index] ?? 0)];
+    const fill = style?.fills?.find((item) => item.type === "SOLID" && item.visible !== false && item.color);
+    const overrideColor = fill?.color ? toCssColor(fill.color, fill.opacity) : null;
+    const color = overrideColor && overrideColor !== baseColor ? overrideColor : null;
+    const previous = segments.at(-1);
+
+    if (previous?.color === color) {
+      previous.text += characters[index];
+    } else {
+      segments.push({ text: characters[index], color });
+    }
+  }
+
+  return segments.some((segment) => segment.color) ? segments : [];
 }
 
 function extractBorderColor(node: FigmaRawNode) {

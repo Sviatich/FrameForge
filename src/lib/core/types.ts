@@ -24,11 +24,17 @@ export type ParsedComponentMeta = {
   propertyKeys: string[];
 };
 
+export type TextSegment = {
+  text: string;
+  color: string | null;
+};
+
 export type ParsedNode = {
   id: string;
   name: string;
   type: string;
   textContent: string;
+  textSegments: TextSegment[];
   x: number | null;
   y: number | null;
   width: number | null;
@@ -98,6 +104,7 @@ export type TransformedNode = {
   tag: string;
   className: string;
   textContent: string;
+  textSegments: TextSegment[];
   role: "layout" | "content" | "control";
   semanticKind:
     | "container"

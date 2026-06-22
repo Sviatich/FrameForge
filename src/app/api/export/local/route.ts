@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z, ZodError } from "zod";
 import { buildLocalizedProjectArchive } from "@/lib/core/exporter";
+import { buildArchiveDownloadName } from "@/lib/projects/download-name";
 import { generatedFileSchema } from "@/lib/projects/schema";
 
 const localExportRequestSchema = z.object({
@@ -14,12 +15,12 @@ export async function POST(request: Request) {
     const json = await request.json();
     const payload = localExportRequestSchema.parse(json);
     const body = await buildLocalizedProjectArchive(payload.files);
-    const downloadName = `${payload.projectName.toLowerCase().replace(/[^a-z0-9]+/g, "-") || "generated-project"}.zip`;
+    const downloadName = buildArchiveDownloadName(payload.projectName);
 
     return new Response(body, {
       headers: {
         "content-type": "application/zip",
-        "content-disposition": `attachment; filename="${downloadName}"`,
+        "content-disposition": `attachment; filename="frameforge.zip"; filename*=UTF-8''${encodeURIComponent(downloadName)}`,
         "cache-control": "no-store",
       },
     });

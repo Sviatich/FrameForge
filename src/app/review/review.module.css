@@ -1,0 +1,300 @@
+.page {
+  min-height: 100svh;
+  padding: 64px 24px 48px;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+.shell {
+  width: min(760px, 100%);
+  margin: 0 auto;
+}
+
+.header {
+  padding-bottom: 58px;
+}
+
+.misisLogo {
+  width: 220px;
+  height: auto;
+  display: block;
+  margin-bottom: 34px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.header h1 {
+  max-width: 650px;
+  font-size: clamp(1.8rem, 5vw, 2.45rem);
+  line-height: 1.08;
+  letter-spacing: -.04em;
+}
+
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 24px;
+  padding: 0 0 52px;
+}
+
+.stepNumber {
+  position: relative;
+  z-index: 1;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: #1456d9;
+  box-shadow: 0 0 0 7px var(--bg);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.step:not(.lastStep)::before {
+  content: "";
+  position: absolute;
+  left: 20px;
+  top: 52px;
+  bottom: 10px;
+  width: 1px;
+  background: rgba(20, 86, 217, .22);
+}
+
+.stepContent {
+  min-width: 0;
+}
+
+.stepContent h2 {
+  margin: 5px 0 12px;
+  font-size: 1.45rem;
+  line-height: 1.2;
+  letter-spacing: -.025em;
+}
+
+.description {
+  max-width: 650px;
+  color: var(--ink-soft);
+  font-size: .94rem;
+  line-height: 1.55;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.field,
+.linkBox {
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--surface-strong);
+}
+
+.field {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px;
+}
+
+.field > div,
+.linkBox > div:first-child {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.field span,
+.linkBox span {
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.field strong,
+.linkBox strong {
+  overflow: hidden;
+  font-family: var(--font-mono), monospace;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copyButton,
+.secondaryLink,
+.primaryLink {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border-radius: 5px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background-color 140ms ease, transform 140ms ease;
+}
+
+.copyButton {
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  background: #fff;
+}
+
+.copyButton:hover,
+.secondaryLink:hover,
+.primaryLink:hover {
+  transform: translateY(-1px);
+}
+
+.copyButton:hover,
+.secondaryLink:hover {
+  background: #f7f7f7;
+}
+
+.copyButton:disabled,
+.secondaryLink[aria-disabled="true"],
+.primaryLink[aria-disabled="true"] {
+  opacity: .45;
+  pointer-events: none;
+}
+
+.copyButton svg,
+.secondaryLink svg,
+.primaryLink svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.linkBox {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  margin-top: 24px;
+  padding: 15px;
+}
+
+.linkActions {
+  display: flex;
+  gap: 8px;
+}
+
+.secondaryLink {
+  border: 1px solid var(--line);
+  color: var(--ink);
+  background: #fff;
+}
+
+.primaryLink {
+  width: fit-content;
+  min-height: 51px;
+  margin-top: 24px;
+  padding: 0 18px;
+  color: #fff;
+  background: var(--accent);
+  font-size: 14px;
+}
+
+.primaryLink:hover {
+  background: var(--accent-strong);
+}
+
+.lastStep {
+  padding-bottom: 0;
+}
+
+.setupNotice {
+  margin: 0 0 34px 72px;
+  border: 1px solid #e7c980;
+  border-radius: 5px;
+  padding: 11px 13px;
+  color: #6b5013;
+  background: #fff8e6;
+  font-size: 12px;
+}
+
+@media (max-width: 680px) {
+  .page {
+    padding: 36px 16px;
+  }
+
+  .misisLogo {
+    width: 190px;
+    margin-bottom: 30px;
+  }
+
+  .header {
+    padding-bottom: 48px;
+  }
+
+  .step {
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 15px;
+    padding: 0 0 44px;
+  }
+
+  .stepNumber {
+    width: 36px;
+    height: 36px;
+  }
+
+  .step:not(.lastStep)::before {
+    left: 17px;
+    top: 46px;
+    bottom: 8px;
+  }
+
+  .stepContent h2 {
+    font-size: 1.3rem;
+  }
+
+  .fields {
+    grid-template-columns: 1fr;
+  }
+
+  .linkBox {
+    grid-template-columns: 1fr;
+  }
+
+  .linkActions > * {
+    flex: 1;
+  }
+
+  .setupNotice {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .header h1 {
+    font-size: 1.8rem;
+  }
+
+  .field {
+    align-items: flex-end;
+  }
+
+  .field .copyButton {
+    width: 40px;
+    padding: 0;
+    font-size: 0;
+  }
+
+  .linkActions {
+    display: grid;
+  }
+}

@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { attachSessionCookie, ensureValidFigmaSession } from "@/lib/figma/auth";
-import { FigmaApiError, formatRetryAfter } from "@/lib/figma/client";
+import { FigmaApiError, formatRetryAfter, isFigmaAuthenticationError } from "@/lib/figma/client";
 import { transformProjectRequestSchema } from "@/lib/projects/schema";
 import { buildProject } from "@/lib/projects/service";
 
@@ -13,6 +13,10 @@ export async function POST(request: Request) {
     const { session, refreshed } = await ensureValidFigmaSession(cookieStore);
     const json = await request.json();
     const payload = transformProjectRequestSchema.parse(json);
+    if (payload.source.kind === "figma-link" && !payload.source.accessToken && !session) {
+      return authExpiredResponse();
+    }
+
     // В рабочем сценарии токен подставляется из сохраненной OAuth-сессии.
     const source =
       payload.source.kind === "figma-link" && !payload.source.accessToken
@@ -32,6 +36,10 @@ export async function POST(request: Request) {
     }
 
     if (error instanceof FigmaApiError) {
+      if (isFigmaAuthenticationError(error)) {
+        return authExpiredResponse();
+      }
+
       return NextResponse.json(
         {
           message: error.message,
@@ -49,4 +57,14 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
+}
+
+function authExpiredResponse() {
+  return attachSessionCookie(
+    NextResponse.json(
+      { message: "Сессия Figma истекла. Подключите аккаунт снова.", authExpired: true },
+      { status: 401 },
+    ),
+    null,
+  );
 }

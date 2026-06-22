@@ -137,7 +137,7 @@ function renderMarkup(
   }
 
   const children = node.children.map((child) => renderMarkup(child, indent + 2, mode, styleClassRegistry)).join("\n");
-  const text = node.textContent ? toMarkupText(node.textContent, mode) : "";
+  const text = renderTextMarkup(node, mode);
 
   if (!children && !text) {
     return mode === "html"
@@ -511,6 +511,29 @@ function toAttribute(key: string, value: string) {
 
 function toMarkupText(value: string, mode: "tsx" | "html") {
   return mode === "tsx" ? escapeJsx(value) : escapeHtml(value);
+}
+
+function renderTextMarkup(node: TransformedNode, mode: "tsx" | "html") {
+  if (!node.textContent) {
+    return "";
+  }
+
+  if (node.textSegments.length === 0) {
+    return toMarkupText(node.textContent, mode);
+  }
+
+  return node.textSegments
+    .map((segment) => {
+      const text = toMarkupText(segment.text, mode);
+
+      if (!segment.color) {
+        return text;
+      }
+
+      const style = mode === "tsx" ? `style={{ color: "${segment.color}" }}` : `style="color: ${segment.color}"`;
+      return `<span ${style}>${text}</span>`;
+    })
+    .join("");
 }
 
 function buildBurgerToggleId(node: TransformedNode) {

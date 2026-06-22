@@ -21,6 +21,7 @@ import {
   type ProjectRecord,
 } from "@/lib/projects/schema";
 import { SiteDisclaimer } from "@/components/site/site-links";
+import { readArchiveDownloadName } from "@/lib/projects/download-name";
 import styles from "./workspace-shell.module.css";
 
 // Рабочая область проекта: preview, дерево файлов, просмотр кода и экспорт архива.
@@ -171,6 +172,12 @@ export function WorkspaceShell({ projectId }: WorkspaceShellProps) {
       const json = await response.json();
 
       if (!response.ok) {
+        if (response.status === 401 && json.authExpired) {
+          sessionStorage.removeItem(WORKSPACE_SESSION_KEY);
+          window.location.replace("/?figma=session_expired");
+          return;
+        }
+
         throw new Error(json.message ?? "Не удалось отрисовать выбранный frame.");
       }
 
@@ -220,7 +227,7 @@ export function WorkspaceShell({ projectId }: WorkspaceShellProps) {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = getDownloadName(response.headers.get("content-disposition"), project.name);
+      link.download = readArchiveDownloadName(response.headers.get("content-disposition"), project.name);
       document.body.append(link);
       link.click();
       link.remove();
@@ -881,17 +888,6 @@ function replaceFrameWidthCssValues(html: string, frameWidth: number) {
 
     return `<style>${nextCss}</style>`;
   });
-}
-
-function getDownloadName(contentDisposition: string | null, projectName: string) {
-  const fallback = `${projectName.toLowerCase().replace(/[^a-z0-9]+/g, "-") || "generated-project"}.zip`;
-
-  if (!contentDisposition) {
-    return fallback;
-  }
-
-  const match = contentDisposition.match(/filename="([^"]+)"/);
-  return match?.[1] ?? fallback;
 }
 
 function ReadyIcon() {

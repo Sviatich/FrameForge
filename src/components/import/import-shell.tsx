@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ZodError } from "zod";
 import { SiteDisclaimer, SiteNav } from "@/components/site/site-links";
 import {
@@ -33,6 +33,7 @@ const WORKSPACE_SESSION_KEY = "transfig:workspace-session";
 
 export function ImportShell({ figmaState, figmaReason }: ImportShellProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [figmaUrl, setFigmaUrl] = useState("");
   const [error, setError] = useState("");
   const [isLoadingFrames, setIsLoadingFrames] = useState(false);
@@ -91,6 +92,10 @@ export function ImportShell({ figmaState, figmaReason }: ImportShellProps) {
           : "Не удалось завершить подключение Figma.",
       );
     }
+
+    if (figmaState === "session_expired") {
+      setError("Сессия Figma истекла. Подключите аккаунт снова.");
+    }
   }, [figmaReason, figmaState, refetchSession]);
 
   useEffect(() => {
@@ -134,6 +139,16 @@ export function ImportShell({ figmaState, figmaReason }: ImportShellProps) {
       const json = await response.json();
 
       if (!response.ok) {
+        if (response.status === 401 && json.authExpired) {
+          sessionStorage.removeItem(STORAGE_KEY);
+          sessionStorage.removeItem(WORKSPACE_SESSION_KEY);
+          queryClient.setQueryData<AuthSession>(["figma-session"], {
+            connected: false,
+            expiresAt: null,
+            userId: null,
+          });
+        }
+
         throw new Error(json.message ?? "Не удалось загрузить файл Figma.");
       }
 
@@ -222,9 +237,9 @@ export function ImportShell({ figmaState, figmaReason }: ImportShellProps) {
               </button>
             </div>
 
-            {error ? <Notice message={error} /> : null}
           </section>
         )}
+        {error ? <Notice message={error} /> : null}
         <div className={styles.inlineNav}>
           <SiteNav />
         </div>
