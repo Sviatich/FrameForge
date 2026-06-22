@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
-import { attachSessionCookie, ensureValidFigmaSession } from "@/lib/figma/auth";
+import { attachSessionCookie, clearSessionCookie, ensureValidFigmaSession } from "@/lib/figma/auth";
 import { FigmaApiError, formatRetryAfter, isFigmaAuthenticationError } from "@/lib/figma/client";
 import { transformProjectRequestSchema } from "@/lib/projects/schema";
 import { buildProject } from "@/lib/projects/service";
@@ -60,11 +60,10 @@ export async function POST(request: Request) {
 }
 
 function authExpiredResponse() {
-  return attachSessionCookie(
-    NextResponse.json(
-      { message: "Сессия Figma истекла. Подключите аккаунт снова.", authExpired: true },
-      { status: 401 },
-    ),
-    null,
+  const response = NextResponse.json(
+    { message: "Сессия Figma истекла. Подключите аккаунт снова.", authExpired: true },
+    { status: 401 },
   );
+  clearSessionCookie(response.cookies);
+  return response;
 }

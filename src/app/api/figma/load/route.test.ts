@@ -4,6 +4,7 @@ import { FigmaApiError } from "@/lib/figma/client";
 const mocks = vi.hoisted(() => ({
   ensureSession: vi.fn(),
   attachCookie: vi.fn((response: Response) => response),
+  clearCookie: vi.fn(),
   loadFrames: vi.fn(),
 }));
 
@@ -11,6 +12,7 @@ vi.mock("next/headers", () => ({ cookies: vi.fn(() => Promise.resolve({})) }));
 vi.mock("@/lib/figma/auth", () => ({
   ensureValidFigmaSession: mocks.ensureSession,
   attachSessionCookie: mocks.attachCookie,
+  clearSessionCookie: mocks.clearCookie,
 }));
 vi.mock("@/lib/projects/service", () => ({ loadFigmaFrames: mocks.loadFrames }));
 
@@ -25,6 +27,7 @@ describe("POST /api/figma/load", () => {
     mocks.ensureSession.mockReset();
     mocks.loadFrames.mockReset();
     mocks.attachCookie.mockClear();
+    mocks.clearCookie.mockClear();
   });
 
   it("returns 401 and clears authorization when there is no session", async () => {
@@ -34,7 +37,7 @@ describe("POST /api/figma/load", () => {
 
     expect(response.status).toBe(401);
     await expect(response.json()).resolves.toMatchObject({ authExpired: true });
-    expect(mocks.attachCookie).toHaveBeenCalledWith(expect.any(Response), null);
+    expect(mocks.clearCookie).toHaveBeenCalledOnce();
   });
 
   it("passes the session token to the Figma service", async () => {

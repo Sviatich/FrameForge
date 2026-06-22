@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { attachSessionCookie, ensureValidFigmaSession } from "@/lib/figma/auth";
+import { attachSessionCookie, clearSessionCookie, ensureValidFigmaSession } from "@/lib/figma/auth";
 
 // Возвращает текущее состояние Figma-сессии для клиентского UI.
 export async function GET() {
@@ -11,6 +11,11 @@ export async function GET() {
     expiresAt: session?.expiresAt ?? null,
     userId: session?.userId ?? null,
   });
+
+  if (!session) {
+    clearSessionCookie(response.cookies);
+    return response;
+  }
 
   return attachSessionCookie(response, refreshed);
 }

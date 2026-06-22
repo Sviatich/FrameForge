@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   ensureSession: vi.fn(),
   attachCookie: vi.fn((response: Response) => response),
+  clearCookie: vi.fn(),
   buildProject: vi.fn(),
 }));
 
@@ -10,6 +11,7 @@ vi.mock("next/headers", () => ({ cookies: vi.fn(() => Promise.resolve({})) }));
 vi.mock("@/lib/figma/auth", () => ({
   ensureValidFigmaSession: mocks.ensureSession,
   attachSessionCookie: mocks.attachCookie,
+  clearSessionCookie: mocks.clearCookie,
 }));
 vi.mock("@/lib/projects/service", () => ({ buildProject: mocks.buildProject }));
 

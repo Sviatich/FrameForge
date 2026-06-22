@@ -258,7 +258,6 @@ export async function ensureValidFigmaSession(cookieStore: CookieReader) {
 
 export function attachSessionCookie(response: NextResponse, session: FigmaOAuthSession | null) {
   if (!session) {
-    clearSessionCookie(response.cookies);
     return response;
   }
 

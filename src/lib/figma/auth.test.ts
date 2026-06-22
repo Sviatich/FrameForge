@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  attachSessionCookie,
   assertFigmaOAuthConfigured,
   buildFigmaAuthorizeUrl,
   createOAuthState,
@@ -13,6 +14,7 @@ import {
   writeStateCookie,
   type FigmaOAuthSession,
 } from "./auth";
+import { NextResponse } from "next/server";
 
 type CookieRecord = { value: string };
 
@@ -125,6 +127,14 @@ describe("Figma OAuth session", () => {
     writeSessionCookie(jar, session);
 
     await expect(ensureValidFigmaSession(jar)).resolves.toEqual({ session, refreshed: null });
+  });
+
+  it("does not clear a valid cookie when no refresh was needed", () => {
+    const response = NextResponse.json({ connected: true });
+
+    attachSessionCookie(response, null);
+
+    expect(response.cookies.get("transfig_figma_session")).toBeUndefined();
   });
 
   it("refreshes an expiring session and retains the refresh token", async () => {
