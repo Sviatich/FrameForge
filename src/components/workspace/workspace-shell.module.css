@@ -777,21 +777,28 @@
   .headerActions {
     justify-content: flex-start;
     width: 100%;
+    min-width: 0;
   }
 
   .headerActions:first-child {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
     flex-wrap: nowrap;
-  }
-
-  .projectTitleBlock {
-    flex: 1 1 auto;
-    width: auto;
-    max-width: none;
     overflow: hidden;
   }
 
+  .projectTitleBlock {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .projectTitle,
   .projectMeta {
     display: block;
+    width: 100%;
+    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
