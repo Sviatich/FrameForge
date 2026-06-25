@@ -776,10 +776,42 @@
 
   .headerActions {
     justify-content: flex-start;
+    width: 100%;
+  }
+
+  .headerActions:first-child {
+    flex-wrap: nowrap;
   }
 
   .projectTitleBlock {
-    max-width: 100%;
+    flex: 1 1 auto;
+    width: auto;
+    max-width: none;
+    overflow: hidden;
+  }
+
+  .projectMeta {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .projectStatus,
+  .projectWarning {
+    display: none;
+  }
+
+  .previewDeviceSwitch {
+    display: none;
+  }
+
+  .switcher,
+  .headerActions:last-child .primaryButton {
+    width: 100%;
+  }
+
+  .switchTab {
     width: 100%;
   }
 
@@ -803,14 +835,16 @@
 
   .surfaceSidebarCollapsed .frameSidebar {
     max-height: 58px;
+    padding: 11px 10px;
   }
 
-  .previewDeviceSwitch {
-    width: 100%;
+  .sidebarToggle {
+    width: 34px;
+    height: 34px;
   }
 
-  .previewDeviceTab {
-    padding: 0 10px;
-    font-size: 0.88rem;
+  .sidebarIcon {
+    width: 16px;
+    height: 16px;
   }
 }

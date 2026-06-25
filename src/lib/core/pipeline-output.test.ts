@@ -114,4 +114,81 @@ describe("Figma text pipeline", () => {
     expect(result.previewHtml).not.toContain("<script>alert");
     expect(result.previewHtml).toContain("&lt;script&gt;");
   });
+
+  it("keeps document landmarks unique and does not turn navigation into a header", () => {
+    const source: FigmaRawNode = {
+      id: "page",
+      name: "Page",
+      type: "FRAME",
+      children: [
+        {
+          id: "header-1",
+          name: "Header",
+          type: "FRAME",
+          children: [],
+        },
+        {
+          id: "nav-1",
+          name: "Main nav",
+          type: "FRAME",
+          children: [],
+        },
+        {
+          id: "main-1",
+          name: "Main",
+          type: "FRAME",
+          children: [
+            {
+              id: "title-1",
+              name: "Title",
+              type: "TEXT",
+              characters: "First title",
+              style: { fontSize: 48 },
+            },
+          ],
+        },
+        {
+          id: "main-2",
+          name: "Main content",
+          type: "FRAME",
+          children: [
+            {
+              id: "title-2",
+              name: "Title",
+              type: "TEXT",
+              characters: "Second title",
+              style: { fontSize: 48 },
+            },
+          ],
+        },
+        {
+          id: "footer-1",
+          name: "Footer",
+          type: "FRAME",
+          children: [],
+        },
+        {
+          id: "footer-2",
+          name: "Footer bottom",
+          type: "FRAME",
+          children: [],
+        },
+      ],
+    };
+
+    const transformed = transformNode(parseFigmaNode(source)!);
+    const tags: string[] = [];
+
+    const collectTags = (node: typeof transformed) => {
+      tags.push(node.tag);
+      node.children.forEach(collectTags);
+    };
+
+    collectTags(transformed);
+
+    expect(tags.filter((tag) => tag === "h1")).toHaveLength(1);
+    expect(tags.filter((tag) => tag === "main")).toHaveLength(1);
+    expect(tags.filter((tag) => tag === "footer")).toHaveLength(1);
+    expect(tags).toContain("nav");
+  });
 });

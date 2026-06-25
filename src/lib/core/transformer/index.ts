@@ -6,6 +6,15 @@ export function transformNode(
   parentLayoutMode: ParsedNode["layout"]["mode"] | "root" = "root",
   insideInteractiveAncestor = false,
 ): TransformedNode {
+  const transformedNode = transformNodeTree(node, parentLayoutMode, insideInteractiveAncestor);
+  return normalizeDocumentSemantics(transformedNode);
+}
+
+function transformNodeTree(
+  node: ParsedNode,
+  parentLayoutMode: ParsedNode["layout"]["mode"] | "root",
+  insideInteractiveAncestor: boolean,
+): TransformedNode {
   // Transformer назначает более честный HTML-тег и переносит веб-стили.
   const role = inferRole(node, insideInteractiveAncestor);
   const tag = inferTag(node, role, insideInteractiveAncestor);
@@ -29,9 +38,68 @@ export function transformNode(
     attributes: buildAttributes(node, semanticKind),
     styles: buildStyles(node, role, parentLayoutMode),
     children: sortChildrenForLayout(node).map((child) =>
-      transformNode(child, node.layout.mode, childInsideInteractiveAncestor),
+      transformNodeTree(child, node.layout.mode, childInsideInteractiveAncestor),
     ),
   };
+}
+
+function normalizeDocumentSemantics(root: TransformedNode) {
+  let hasH1 = false;
+  let hasMain = false;
+  let hasFooter = false;
+  let hasPageHeader = false;
+
+  function normalize(node: TransformedNode, depth: number): TransformedNode {
+    let tag = node.tag;
+
+    if (tag === "h1") {
+      if (hasH1) {
+        tag = "h2";
+      } else {
+        hasH1 = true;
+      }
+    }
+
+    if (tag === "main") {
+      if (hasMain) {
+        tag = "section";
+      } else {
+        hasMain = true;
+      }
+    }
+
+    if (tag === "footer") {
+      if (hasFooter) {
+        tag = "section";
+      } else {
+        hasFooter = true;
+      }
+    }
+
+    // У страницы должен быть один основной header. Внутренние шапки секций
+    // остаются допустимыми, а повторные верхнеуровневые landmark-блоки понижаются.
+    if (tag === "header" && depth <= 1) {
+      if (hasPageHeader) {
+        tag = "section";
+      } else {
+        hasPageHeader = true;
+      }
+    }
+
+    const semanticKind =
+      node.semanticKind === "section" && !["section", "header", "footer", "main"].includes(tag)
+        ? "container"
+        : node.semanticKind;
+
+    return {
+      ...node,
+      tag,
+      semanticKind,
+      children: node.children.map((child) => normalize(child, depth + 1)),
+    };
+  }
+
+  return normalize(root, 0);
 }
 
 function inferRole(node: ParsedNode, insideInteractiveAncestor: boolean): TransformedNode["role"] {
@@ -99,8 +167,12 @@ function inferTag(
     return "a";
   }
 
-  if (lowerName.includes("header") || lowerName.includes("nav")) {
+  if (lowerName.includes("header")) {
     return "header";
+  }
+
+  if (lowerName.includes("nav")) {
+    return "nav";
   }
 
   if (lowerName.includes("footer")) {
